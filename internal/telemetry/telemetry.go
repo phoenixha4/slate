@@ -40,7 +40,7 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 
-	"github.com/phoenixha4/learning_go/internal/logging"
+	"github.com/phoenixha4/slate/internal/logging"
 )
 
 // Config carries the telemetry-relevant subset of application configuration.
@@ -226,7 +226,7 @@ func (e *consoleLogExporter) Export(ctx context.Context, records []sdklog.Record
 	return nil
 }
 
-func (e *consoleLogExporter) Shutdown(_ context.Context) error  { return nil }
+func (e *consoleLogExporter) Shutdown(_ context.Context) error   { return nil }
 func (e *consoleLogExporter) ForceFlush(_ context.Context) error { return nil }
 
 func otelSeverityToSlog(s otellog.Severity) slog.Level {

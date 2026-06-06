@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/phoenixha4/learning_go/internal/models"
-	"github.com/phoenixha4/learning_go/internal/store"
+	"github.com/phoenixha4/slate/internal/models"
+	"github.com/phoenixha4/slate/internal/store"
 )
 
 // ListProjects handles GET /projects.

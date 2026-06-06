@@ -8,9 +8,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/phoenixha4/learning_go/internal/handlers"
-	"github.com/phoenixha4/learning_go/internal/models"
-	"github.com/phoenixha4/learning_go/internal/store"
+	"github.com/phoenixha4/slate/internal/handlers"
+	"github.com/phoenixha4/slate/internal/models"
+	"github.com/phoenixha4/slate/internal/store"
 )
 
 // ─── Mock store ───────────────────────────────────────────────────────────

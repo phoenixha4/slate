@@ -11,10 +11,10 @@ import (
 
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 
-	"github.com/phoenixha4/learning_go/assets"
-	"github.com/phoenixha4/learning_go/internal/handlers"
-	"github.com/phoenixha4/learning_go/internal/middleware"
-	"github.com/phoenixha4/learning_go/internal/store"
+	"github.com/phoenixha4/slate/assets"
+	"github.com/phoenixha4/slate/internal/handlers"
+	"github.com/phoenixha4/slate/internal/middleware"
+	"github.com/phoenixha4/slate/internal/store"
 )
 
 // Options configures process-level HTTP behavior.

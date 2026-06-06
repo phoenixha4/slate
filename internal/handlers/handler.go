@@ -9,7 +9,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/phoenixha4/learning_go/internal/store"
+	"github.com/phoenixha4/slate/internal/store"
 )
 
 // Handler wraps application dependencies and exposes them to every route.

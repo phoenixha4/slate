@@ -10,7 +10,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/phoenixha4/learning_go/internal/models"
+	"github.com/phoenixha4/slate/internal/models"
 )
 
 // inboxProjectID is the fixed UUID for the built-in Inbox project seeded in

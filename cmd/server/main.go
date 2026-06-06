@@ -15,11 +15,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/phoenixha4/learning_go/internal/config"
-	"github.com/phoenixha4/learning_go/internal/db"
-	"github.com/phoenixha4/learning_go/internal/server"
-	"github.com/phoenixha4/learning_go/internal/store"
-	"github.com/phoenixha4/learning_go/internal/telemetry"
+	"github.com/phoenixha4/slate/internal/config"
+	"github.com/phoenixha4/slate/internal/db"
+	"github.com/phoenixha4/slate/internal/server"
+	"github.com/phoenixha4/slate/internal/store"
+	"github.com/phoenixha4/slate/internal/telemetry"
 )
 
 func main() {

@@ -6,7 +6,7 @@ package store
 import (
 	"context"
 
-	"github.com/phoenixha4/learning_go/internal/models"
+	"github.com/phoenixha4/slate/internal/models"
 )
 
 // Store is the single data-access interface for the whole application.
