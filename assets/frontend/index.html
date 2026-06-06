@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Slate</title>
+
+  <link rel="stylesheet" href="./css/app.css" />
+</head>
+
+<body data-theme="light">
+
+<!-- ═══════════════════════════════════════════════════════════════
+     Top navigation bar
+═══════════════════════════════════════════════════════════════ -->
+<nav data-topnav>
+  <div class="row align-center">
+
+    <div class="col-4 hstack gap-sm">
+      <button data-sidebar-toggle class="ghost small" aria-label="Toggle sidebar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="4" y1="7" x2="20" y2="7"/>
+          <line x1="4" y1="12" x2="20" y2="12"/>
+          <line x1="4" y1="17" x2="16" y2="17"/>
+        </svg>
+      </button>
+      <span class="brand"><span class="brand-dot"></span>Slate</span>
+    </div>
+
+    <div class="col-8 hstack justify-end gap-sm">
+      <label class="search-wrap" aria-label="Search tasks">
+        <span class="search-icon">⌕</span>
+        <input id="search-input" type="search" placeholder="Search tasks, labels, projects..."
+               class="search-field" autocomplete="off" />
+        <kbd>/</kbd>
+      </label>
+      <button id="btn-theme" class="ghost small icon-button" aria-label="Toggle dark mode" title="Toggle dark mode">
+        ◐
+      </button>
+      <button id="btn-shortcuts" class="ghost small icon-button" aria-label="Keyboard shortcuts" title="Keyboard shortcuts">
+        ?
+      </button>
+      <button id="btn-add-task" class="small primary-action">New <kbd>N</kbd></button>
+    </div>
+
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     Left sidebar — views, projects, labels
+═══════════════════════════════════════════════════════════════ -->
+<div id="sidebar-backdrop" class="glass-backdrop hidden" aria-hidden="true"></div>
+<aside data-sidebar aria-label="Navigation">
+  <div class="sidebar-head">
+    <div>
+      <p class="sidebar-kicker">Workspace</p>
+      <h1>Focus Hub</h1>
+    </div>
+    <div class="sidebar-actions">
+      <button data-sidebar-pin class="ghost tiny" aria-label="Pin sidebar" title="Pin sidebar">⌖</button>
+      <button data-sidebar-toggle class="ghost tiny" aria-label="Collapse sidebar">‹</button>
+    </div>
+  </div>
+
+  <button id="sidebar-quick-add" class="sidebar-capture" type="button">
+    <span>Capture task</span>
+    <kbd>N</kbd>
+  </button>
+
+  <nav>
+    <ul>
+      <!-- ── Views ─────────────────────────────────────────── -->
+      <li>
+        <a href="#" class="nav-link" data-view="inbox">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
+            <path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>
+          </svg>
+          Inbox
+          <span class="badge small" data-variant="secondary" id="badge-inbox" style="display:none"></span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-view="today">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          Today
+          <span class="badge small" data-variant="secondary" id="badge-today" style="display:none"></span>
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-view="upcoming">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Upcoming
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" data-view="all">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/>
+            <line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+          All Tasks
+        </a>
+      </li>
+
+      <li><hr /></li>
+
+      <!-- ── Projects ──────────────────────────────────────── -->
+      <li>
+        <details open>
+          <summary class="section-summary">Projects
+            <button id="btn-new-project" class="ghost tiny ml-auto" title="New project"
+                    onclick="event.stopPropagation()">+</button>
+          </summary>
+          <ul id="project-list" class="nav-sub-list"></ul>
+        </details>
+      </li>
+
+      <!-- ── Labels ────────────────────────────────────────── -->
+      <li>
+        <details open>
+          <summary class="section-summary">Labels
+            <button id="btn-new-label" class="ghost tiny ml-auto" title="New label"
+                    onclick="event.stopPropagation()">+</button>
+          </summary>
+          <ul id="label-list" class="nav-sub-list"></ul>
+        </details>
+      </li>
+    </ul>
+  </nav>
+  <div class="sidebar-foot">
+    <button id="sidebar-shortcuts" class="ghost small" type="button">Shortcuts <kbd>?</kbd></button>
+    <button id="sidebar-theme" class="ghost small" type="button">Theme <kbd>D</kbd></button>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     Main content — task list + detail panel side-by-side
+═══════════════════════════════════════════════════════════════ -->
+<main>
+  <div class="content-flex">
+
+    <!-- ── Task list panel ─────────────────────────────────── -->
+    <section id="task-panel">
+
+      <div class="panel-header hstack">
+        <div>
+          <h2 id="view-title">Inbox</h2>
+          <small id="view-sub" class="text-muted"></small>
+        </div>
+        <button id="btn-toggle-done" class="outline small ml-auto">
+          Completed <kbd>Shift C</kbd>
+        </button>
+      </div>
+
+      <div id="task-list"></div>
+
+      <!-- Inline add-task form (hidden until user clicks "+ Add task") -->
+      <div id="inline-add" class="card hidden" style="margin-top:.75rem">
+        <input id="inline-title" type="text" placeholder="Task name…" autocomplete="off" />
+        <textarea id="inline-notes" placeholder="Notes (optional)" rows="2"
+                  style="margin-top:.5rem"></textarea>
+
+        <div class="hstack flex-wrap gap-sm" style="margin-top:.75rem;padding-top:.75rem;
+             border-top:1px solid var(--border)">
+          <div class="priority-picker" id="inline-priority" data-sel="4">
+            <button type="button" data-p="1" class="outline small p-btn">P1</button>
+            <button type="button" data-p="2" class="outline small p-btn">P2</button>
+            <button type="button" data-p="3" class="outline small p-btn">P3</button>
+            <button type="button" data-p="4" class="small p-btn active-p4">P4</button>
+          </div>
+          <input type="date" id="inline-due" style="flex:1;min-width:130px" />
+          <select id="inline-project" style="flex:1;min-width:100px"></select>
+        </div>
+
+        <div class="hstack justify-end gap-sm" style="margin-top:.75rem">
+          <button id="btn-inline-cancel" class="outline small">Cancel</button>
+          <button id="btn-inline-save" class="small">Add task</button>
+        </div>
+      </div>
+
+      <button id="btn-show-add" class="ghost small" style="margin-top:.5rem">
+        New task
+      </button>
+    </section>
+
+    <!-- ── Task detail panel ───────────────────────────────── -->
+    <div id="detail-backdrop" class="glass-backdrop hidden" aria-hidden="true"></div>
+    <aside id="detail-panel" class="dp-closed" aria-label="Task detail">
+
+      <div class="hstack" style="margin-bottom:.75rem">
+        <span id="dp-project-badge" class="badge" data-variant="secondary"></span>
+        <button id="btn-dp-close" class="ghost small ml-auto" aria-label="Close">✕</button>
+      </div>
+
+      <!-- Title -->
+      <div class="dp-title-row">
+        <button id="dp-check" class="task-check-circle" aria-label="Toggle complete"></button>
+        <div id="dp-title" contenteditable="true" spellcheck="false"
+             class="dp-title-field"></div>
+      </div>
+
+      <!-- Notes -->
+      <textarea id="dp-notes" class="dp-notes" placeholder="Add notes…"
+                rows="4"></textarea>
+      <div id="dp-notes-preview" class="markdown-preview" tabindex="0"></div>
+
+      <!-- Fields -->
+      <div class="dp-fields">
+        <div class="dp-field-row">
+          <span class="field-lbl">Due date</span>
+          <input type="date" id="dp-due" class="field-val" />
+        </div>
+        <div class="dp-field-row">
+          <span class="field-lbl">Priority</span>
+          <div class="priority-picker" id="dp-priority">
+            <button type="button" data-p="1" class="outline small p-btn">P1</button>
+            <button type="button" data-p="2" class="outline small p-btn">P2</button>
+            <button type="button" data-p="3" class="outline small p-btn">P3</button>
+            <button type="button" data-p="4" class="outline small p-btn">P4</button>
+          </div>
+        </div>
+        <div class="dp-field-row">
+          <span class="field-lbl">Project</span>
+          <select id="dp-project-sel" class="field-val"></select>
+        </div>
+        <div class="dp-field-row">
+          <span class="field-lbl">Labels</span>
+          <div id="dp-labels" class="hstack flex-wrap gap-xs"></div>
+        </div>
+      </div>
+
+      <!-- Sub-tasks -->
+      <div class="dp-subtasks">
+        <div class="hstack" style="margin-bottom:.5rem">
+          <strong style="font-size:.8rem;text-transform:uppercase;
+                   letter-spacing:.06em;color:var(--muted-foreground)">Sub-tasks</strong>
+          <button id="btn-dp-add-sub" class="ghost small ml-auto">+ Add</button>
+        </div>
+        <div id="dp-subtask-list"></div>
+        <div id="dp-subtask-add" class="subtask-add hidden">
+          <input id="dp-subtask-title" type="text" placeholder="Sub-task name" autocomplete="off" />
+          <button id="btn-dp-subtask-save" class="small">Add</button>
+          <button id="btn-dp-subtask-cancel" class="ghost small">Cancel</button>
+        </div>
+      </div>
+
+      <div class="hstack" style="margin-top:1rem;padding-top:.75rem;
+           border-top:1px solid var(--border)">
+        <small id="dp-meta" class="text-muted"></small>
+        <button id="btn-dp-delete" class="ghost small ml-auto"
+                style="color:var(--danger)">Delete task</button>
+      </div>
+    </aside>
+
+  </div><!-- /content-flex -->
+</main>
+
+<!-- Dialogs -->
+
+<!-- New task dialog -->
+<dialog id="dlg-add-task">
+  <form>
+    <header>
+      <h3>New task</h3>
+    </header>
+    <div class="vstack">
+      <label>Title
+        <input id="qa-title" type="text" placeholder="Task name…" autocomplete="off" />
+      </label>
+      <label>Notes
+        <textarea id="qa-notes" rows="3" placeholder="Optional description…"></textarea>
+      </label>
+      <div class="row">
+        <div class="col-6">
+          <label>Project <select id="qa-project"></select></label>
+        </div>
+        <div class="col-6">
+          <label>Due date <input type="date" id="qa-due" /></label>
+        </div>
+      </div>
+      <div>
+        <label>Priority</label>
+        <div class="priority-picker" id="qa-priority" style="margin-top:.25rem" data-sel="4">
+          <button type="button" data-p="1" class="outline small p-btn">P1</button>
+          <button type="button" data-p="2" class="outline small p-btn">P2</button>
+          <button type="button" data-p="3" class="outline small p-btn">P3</button>
+          <button type="button" data-p="4" class="small p-btn active-p4">P4</button>
+        </div>
+      </div>
+      <div>
+        <label>Labels</label>
+        <div id="qa-labels" class="hstack flex-wrap gap-xs" style="margin-top:.25rem"></div>
+      </div>
+    </div>
+    <footer>
+      <button type="button" id="qa-cancel" class="outline">Cancel</button>
+      <button type="button" id="qa-save">Add task</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- New project dialog -->
+<dialog id="dlg-add-project">
+  <form>
+    <header><h3>New project</h3></header>
+    <div class="vstack">
+      <label>Name
+        <input id="proj-name" type="text" placeholder="Project name…" autocomplete="off" />
+      </label>
+      <div>
+        <label>Colour</label>
+        <div id="proj-colors" class="color-swatches" style="margin-top:.5rem"></div>
+      </div>
+    </div>
+    <footer>
+      <button type="button" id="proj-cancel" class="outline">Cancel</button>
+      <button type="button" id="proj-save">Create project</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- New label dialog -->
+<dialog id="dlg-add-label">
+  <form>
+    <header><h3>New label</h3></header>
+    <div class="vstack">
+      <label>Name
+        <input id="lbl-name" type="text" placeholder="Label name…" autocomplete="off" />
+      </label>
+      <div>
+        <label>Colour</label>
+        <div id="lbl-colors" class="color-swatches" style="margin-top:.5rem"></div>
+      </div>
+    </div>
+    <footer>
+      <button type="button" id="lbl-cancel" class="outline">Cancel</button>
+      <button type="button" id="lbl-save">Create label</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- Keyboard shortcuts -->
+<dialog id="dlg-shortcuts">
+  <form>
+    <header><h3>Keyboard shortcuts</h3></header>
+    <div class="shortcut-grid">
+      <span><kbd>N</kbd></span><p>New task</p>
+      <span><kbd>/</kbd></span><p>Search</p>
+      <span><kbd>G</kbd><kbd>I</kbd></span><p>Inbox</p>
+      <span><kbd>G</kbd><kbd>T</kbd></span><p>Today</p>
+      <span><kbd>G</kbd><kbd>U</kbd></span><p>Upcoming</p>
+      <span><kbd>G</kbd><kbd>A</kbd></span><p>All tasks</p>
+      <span><kbd>S</kbd></span><p>Toggle sidebar</p>
+      <span><kbd>P</kbd></span><p>Pin sidebar</p>
+      <span><kbd>D</kbd></span><p>Toggle dark mode</p>
+      <span><kbd>?</kbd></span><p>Show shortcuts</p>
+      <span><kbd>Shift</kbd><kbd>C</kbd></span><p>Show completed</p>
+      <span><kbd>Enter</kbd></span><p>Save active task form</p>
+      <span><kbd>Esc</kbd></span><p>Close panels and dialogs</p>
+    </div>
+    <footer>
+      <button type="button" id="shortcuts-close">Done</button>
+    </footer>
+  </form>
+</dialog>
+
+<script type="module" src="./js/app.js"></script>
+</body>
+</html>

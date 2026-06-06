@@ -1,0 +1,67 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: dev
+    env_file:
+      - path: ../.env
+        required: false
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
+      LOG_FORMAT: ${LOG_FORMAT:-pretty}
+      PORT: ${PORT:-8080}
+      DATABASE_URL: ${DATABASE_URL:-postgres://todo:todo@db:5432/todo?sslmode=disable}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-*}
+      READ_TIMEOUT: ${READ_TIMEOUT:-15s}
+      WRITE_TIMEOUT: ${WRITE_TIMEOUT:-30s}
+      IDLE_TIMEOUT: ${IDLE_TIMEOUT:-60s}
+      SHUTDOWN_TIMEOUT: ${SHUTDOWN_TIMEOUT:-10s}
+      READINESS_TIMEOUT: ${READINESS_TIMEOUT:-2s}
+    ports:
+      - "${HOST_PORT:-8080}:${PORT:-8080}"
+    depends_on:
+      db:
+        condition: service_healthy
+    develop:
+      watch:
+        - action: sync+restart
+          path: ../cmd
+          target: /app/cmd
+        - action: sync+restart
+          path: ../internal
+          target: /app/internal
+        - action: sync+restart
+          path: ../assets
+          target: /app/assets
+        - action: rebuild
+          path: ../go.mod
+        - action: rebuild
+          path: ../go.sum
+        - action: rebuild
+          path: ./Dockerfile
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    env_file:
+      - path: ../.env
+        required: false
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-todo}
+      POSTGRES_USER: ${POSTGRES_USER:-todo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-todo}
+    ports:
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  pgdata:
